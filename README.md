@@ -21,17 +21,6 @@ A Python script that converts any electronic components from [EasyEDA](https://e
   <img src="https://raw.githubusercontent.com/uPesy/easyeda2kicad.py/master/ressources/demo_footprint.png" width="500">
 </div>
 
-
-## 🎆 Sponsor and Support
-
-If this tool has saved you a lot of time when designing a PCB, please consider supporting the project by :
-- Subscribing to uPesy Premium Membership to have access to high-quality electronics tutorials at https://www.upesy.com/products/subscription
-- Buying one of my ESP32 DevKit boards: https://www.upesy.com/pages/store
-
-<div align="center">
-<a href="https://www.upesy.com/" target="_blank"><img src="https://raw.githubusercontent.com/uPesy/easyeda2kicad.py/master/ressources/upesy_store.jpg" width="350"/></a>
-</div>
-
 ## 💾 Installation
 
 If you have already Python installed you can run directly in the common terminal.<br>
