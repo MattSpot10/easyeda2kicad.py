@@ -34,11 +34,19 @@ If this tool has saved you a lot of time when designing a PCB, please consider s
 
 ## 💾 Installation
 
+If you have already Python installed you can run directly in the common terminal.<br>
+If not, you can use the Python executable included with Kicad by using the KiCad Command Prompt.
+<div align="left">
+  <img src="https://raw.githubusercontent.com/uPesy/easyeda2kicad.py/master/ressources/kicad_command_prompt_install.png" width="500">
+</div>
+
+Then run this command to install easyeda2kicad
+
 ```bash
 pip install easyeda2kicad
 ```
 
-Note: In MacOS you need to use the KiCad python to install easyeda2kicad.
+Note: On MacOS, you can run the KiCad Python executable with this command to install easyeda2kicad.
 ```bash
 /Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/Current/bin/python3 -m pip install easyeda2kicad
 ```
