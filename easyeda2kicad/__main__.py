@@ -26,10 +26,7 @@ from easyeda2kicad.helpers import (
 from easyeda2kicad.kicad.export_kicad_3d_model import Exporter3dModelKicad
 from easyeda2kicad.kicad.export_kicad_footprint import ExporterFootprintKicad
 from easyeda2kicad.kicad.export_kicad_symbol import ExporterSymbolKicad
-from easyeda2kicad.kicad.parameters_kicad_symbol import (
-    KicadVersion,
-    sanitize_fields,
-)
+from easyeda2kicad.kicad.parameters_kicad_symbol import KicadVersion, sanitize_fields
 
 
 def get_parser() -> argparse.ArgumentParser:
@@ -199,6 +196,7 @@ def valid_arguments(arguments: dict) -> bool:
 
     return True
 
+
 def get_documents_folder():
     if os.name == "nt":  # Check if the OS is Windows
         CSIDL_PERSONAL = 5  # CSIDL for "My Documents"
@@ -210,6 +208,7 @@ def get_documents_folder():
             os.path.expanduser("~"),
             "Documents",
         )
+
 
 def delete_component_in_symbol_lib(
     lib_path: str, component_id: str, component_name: str
