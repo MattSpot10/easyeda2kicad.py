@@ -21,6 +21,7 @@ from easyeda2kicad.helpers import (
     id_already_in_symbol_lib,
     set_logger,
     update_component_in_symbol_lib_file,
+    add_sub_components_in_symbol_lib_file,
 )
 from easyeda2kicad.kicad.export_kicad_3d_model import Exporter3dModelKicad
 from easyeda2kicad.kicad.export_kicad_footprint import ExporterFootprintKicad
@@ -259,6 +260,13 @@ def main(argv: List[str] = sys.argv[1:]) -> int:
         importer = EasyedaSymbolImporter(easyeda_cp_cad_data=cad_data)
         easyeda_symbol: EeSymbol = importer.get_symbol()
         # print(easyeda_symbol)
+        
+        #adding support for importing sub symbols
+        easyeda_sub_symbols: EeSymbol = []
+        for cad_data_subpart in cad_data.get("subparts", []):
+            importer = EasyedaSymbolImporter(easyeda_cp_cad_data=cad_data_subpart)
+            easyeda_sub_symbols.append(importer.get_symbol())
+        #END
 
         is_id_already_in_symbol_lib = id_already_in_symbol_lib(
             lib_path=f"{arguments['output']}.{sym_lib_ext}",
@@ -278,6 +286,13 @@ def main(argv: List[str] = sys.argv[1:]) -> int:
             footprint_lib_name=arguments["output"].split("/")[-1].split(".")[0],
         )
 
+        #adding support for subsymbol kicad export
+        kicad_sub_symbols_lib = []
+        for symbol in easyeda_sub_symbols:
+            exporter = ExporterSymbolKicad(symbol=symbol, kicad_version=kicad_version)
+            kicad_sub_symbols_lib.append(exporter.export(footprint_lib_name=arguments["output"].split("/")[-1].split(".")[0],))
+        #END
+
         if is_id_already_in_symbol_lib:
             update_component_in_symbol_lib_file(
                 lib_path=f"{arguments['output']}.{sym_lib_ext}",
@@ -291,6 +306,17 @@ def main(argv: List[str] = sys.argv[1:]) -> int:
                 component_content=kicad_symbol_lib,
                 kicad_version=kicad_version,
             )
+        if kicad_sub_symbols_lib:
+            if (kicad_version == KicadVersion.v6):
+                add_sub_components_in_symbol_lib_file(
+                    lib_path=f"{arguments['output']}.{sym_lib_ext}",
+                    component_name=easyeda_symbol.info.name,
+                    sub_components_content=kicad_sub_symbols_lib,
+                    kicad_version=kicad_version,
+                )
+            else:
+                logging.error("The sub-symbols were not added. Only kicad version 6 is currently supported for adding multi unit symbols.")
+
 
         logging.info(
             f"Created Kicad symbol for ID : {component_id}\n"

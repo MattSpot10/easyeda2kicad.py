@@ -115,6 +115,53 @@ def add_component_in_symbol_lib_file(
                 )
             )
 
+initial_symbol_regex_pattern = {
+    # "v5": r"(#\n# {component_name}\n#\n.*?ENDDEF\n)",
+    "v6": r'\(symbol "{component_name}_0_1"\n.*?\)',
+    "v6_99": r"",
+}
+
+sub_symbol_regex_pattern = {
+    # "v5": r"(#\n# {component_name}\n#\n.*?ENDDEF\n)",
+    "v6": r'\(symbol "{component_name}_0_1".*?\n    \)',
+    "v6_99": r"",
+}
+
+# replace the empty symbol, generated from the first iteration, with our sub symbols and discard all their header information.
+def add_sub_components_in_symbol_lib_file(
+    lib_path: str,
+    component_name: str,
+    sub_components_content: list[str],
+    kicad_version: KicadVersion,
+) -> None:
+    with open(file=lib_path, encoding="utf-8") as lib_file:
+        current_lib = lib_file.read()
+        components_content = ""
+        for i, component in enumerate(sub_components_content):
+            match = re.search(
+                sub_symbol_regex_pattern[kicad_version.name].format(
+                    component_name=sanitize_for_regex(component_name)
+                ),
+                component,
+                flags=re.DOTALL,
+            )
+            if match:
+                components_content += "\n    " + match.group(0).replace(f"{component_name}_0_1", f"{component_name}_{i+1}_1")   #iterate symbol names
+        new_lib = re.sub(
+            initial_symbol_regex_pattern[kicad_version.name].format(
+                component_name=sanitize_for_regex(component_name)
+            ),
+            components_content,
+            current_lib,
+            flags=re.DOTALL,
+        )
+        new_lib = new_lib.replace(
+            "(generator kicad_symbol_editor)",
+            "(generator https://github.com/uPesy/easyeda2kicad.py)",
+        )
+    with open(file=lib_path, mode="w", encoding="utf-8") as lib_file:
+        lib_file.write(new_lib)
+
 
 def get_local_config() -> dict:
     if not os.path.isfile("easyeda2kicad_config.json"):
